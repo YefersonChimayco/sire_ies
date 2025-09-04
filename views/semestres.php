@@ -10,7 +10,7 @@
     <?php include __DIR__ . '/header.php'; ?>
     <main class="dashboard-container">
         <h2>Gestión de Semestres</h2>
-        <a href="index.php?controller=auth&action=dashboard" class="back-btn">Regresar al Dashboard</a>
+        <a href="index.php?controller=auth&action=dashboard" class="back-btn">Regresar al Inicio</a>
         <?php if (isset($message)): ?>
             <p class="message"><?php echo htmlspecialchars($message); ?></p>
         <?php endif; ?>

@@ -14,10 +14,11 @@ class UserModel {
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user && $user['password'] === $password) { // Comparación en texto plano temporal
+
+        // Comparación en texto plano (solo para pruebas, recomendable usar password_hash)
+        if ($user && $user['password'] === $password) {
             return $user;
         }
         return false;
     }
 }
-?>
