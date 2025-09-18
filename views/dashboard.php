@@ -30,6 +30,13 @@
                 <h3>Programas de Estudio</h3>
                 <p>Organizar los programas y carreras</p>
             </a>
+
+            <!-- Nueva tarjeta para Usuarios -->
+            <a href="index.php?controller=user&action=gestion" class="dashboard-card">
+                <div class="card-icon">👤</div>
+                <h3>Usuarios</h3>
+                <p>Administrar usuarios del sistema</p>
+            </a>
         </div>
     </main>
 

@@ -30,7 +30,10 @@ class AuthController {
             require_once __DIR__ . '/../views/login.php';
         }
     }
-
+public function gestion() {
+        $usuarios = $this->model->getAllUsers();
+        include __DIR__ . '/../views/usuarios.php';
+    }
     // ---- REGISTRO ----
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {

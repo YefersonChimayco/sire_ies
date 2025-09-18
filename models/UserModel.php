@@ -33,4 +33,10 @@ class UserModel {
 
         return $stmt->execute();
     }
+    // ---- LISTADO DE USUARIOS ----
+public function getAllUsers() {
+    $stmt = $this->db->query("SELECT id, username FROM usuarios ORDER BY id ASC");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }
