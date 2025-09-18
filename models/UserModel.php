@@ -16,7 +16,6 @@ class UserModel {
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Verificación segura
         if ($user && password_verify($password, $user['password'])) {
             return $user;
         }
@@ -33,10 +32,17 @@ class UserModel {
 
         return $stmt->execute();
     }
-    // ---- LISTADO DE USUARIOS ----
-public function getAllUsers() {
-    $stmt = $this->db->query("SELECT id, username FROM usuarios ORDER BY id ASC");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
+    // ---- LISTADO DE USUARIOS ----
+    public function getAllUsers() {
+        $stmt = $this->db->query("SELECT id, username FROM usuarios ORDER BY id DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ---- ELIMINAR USUARIO ----
+    public function deleteUser($id) {
+        $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }

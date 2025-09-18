@@ -31,8 +31,7 @@
                 <p>Organizar los programas y carreras</p>
             </a>
 
-            <!-- Nueva tarjeta para Usuarios -->
-            <a href="index.php?controller=user&action=gestion" class="dashboard-card">
+            <a href="index.php?controller=auth&action=gestion" class="dashboard-card">
                 <div class="card-icon">👤</div>
                 <h3>Usuarios</h3>
                 <p>Administrar usuarios del sistema</p>
