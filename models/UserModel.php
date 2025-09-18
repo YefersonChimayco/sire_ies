@@ -9,16 +9,28 @@ class UserModel {
         $this->db = $database->connect();
     }
 
+    // ---- LOGIN ----
     public function login($username, $password) {
         $stmt = $this->db->prepare("SELECT id, username, password FROM usuarios WHERE username = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Comparación en texto plano (solo para pruebas, recomendable usar password_hash)
-        if ($user && $user['password'] === $password) {
+        // Verificación segura
+        if ($user && password_verify($password, $user['password'])) {
             return $user;
         }
         return false;
+    }
+
+    // ---- REGISTRO ----
+    public function register($username, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        $stmt = $this->db->prepare("INSERT INTO usuarios (username, password) VALUES (:username, :password)");
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':password', $hashedPassword);
+
+        return $stmt->execute();
     }
 }

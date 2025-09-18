@@ -8,11 +8,14 @@ class AuthController {
         $this->model = new UserModel();
     }
 
+    // ---- LOGIN ----
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = trim($_POST['username'] ?? '');
             $password = trim($_POST['password'] ?? '');
+
             $user = $this->model->login($username, $password);
+
             if ($user) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
@@ -28,6 +31,26 @@ class AuthController {
         }
     }
 
+    // ---- REGISTRO ----
+    public function register() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $username = trim($_POST['username'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+
+            if ($this->model->register($username, $password)) {
+                header('Location: index.php?controller=auth&action=login');
+                exit;
+            } else {
+                $error = "Error al registrar usuario.";
+                require_once __DIR__ . '/../views/register.php';
+            }
+        } else {
+            $error = '';
+            require_once __DIR__ . '/../views/register.php';
+        }
+    }
+
+    // ---- DASHBOARD ----
     public function dashboard() {
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?controller=auth&action=login');
@@ -36,10 +59,10 @@ class AuthController {
         require_once __DIR__ . '/../views/dashboard.php';
     }
 
+    // ---- LOGOUT ----
     public function logout() {
         session_destroy();
         header('Location: index.php?controller=auth&action=login');
         exit;
     }
 }
-?>
