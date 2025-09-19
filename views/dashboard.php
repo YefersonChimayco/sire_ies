@@ -36,6 +36,18 @@
                 <h3>Usuarios</h3>
                 <p>Administrar usuarios del sistema</p>
             </a>
+              <a href="index.php?controller=token&action=gestion" class="dashboard-card">
+                <div class="card-icon"></div>
+                <h3>TOKENS</h3>
+                <p>tokens
+                </p>
+            </a>
+            <a href="index.php?controller=cliente&action=gestion" class="dashboard-card">
+                <div class="card-icon"></div>
+                <h3>Clientes</h3>
+                <p>clientes
+                </p>
+            </a>
         </div>
     </main>
 

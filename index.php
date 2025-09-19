@@ -15,7 +15,7 @@ $controller = $_GET['controller'] ?? 'auth';  // Por defecto: autenticación
 $action     = $_GET['action'] ?? 'login';     // Por defecto: login
 
 // Posibles parámetros adicionales
-$id  = $_GET['id']  ?? null;   // Para programas/semestres
+$id  = $_GET['id']  ?? null;   // Para programas, semestres, tokens
 $dni = $_GET['dni'] ?? null;   // Para estudiantes
 $uid = $_GET['uid'] ?? null;   // Para usuarios
 
@@ -38,13 +38,22 @@ if (file_exists($controllerFile)) {
             // --- Manejo de parámetros según acción ---
             if ($dni && in_array($action, ['updateEstudiante', 'deleteEstudiante'])) {
                 $controllerObj->$action($dni);
-            } elseif ($id && in_array($action, ['updatePrograma', 'deletePrograma', 'updateSemestre', 'deleteSemestre'])) {
+
+            } elseif ($id && in_array($action, [
+                'updatePrograma', 'deletePrograma',
+                'updateSemestre', 'deleteSemestre',
+                'updateToken', 'deleteToken' ,
+    'updateCliente', 'deleteCliente'  //
+            ])) {
                 $controllerObj->$action($id);
+
             } elseif ($uid && in_array($action, ['updateUser', 'deleteUser'])) {
                 $controllerObj->$action($uid);
+
             } else {
                 $controllerObj->$action();
             }
+
         } else {
             // Acción no encontrada → cargar gestion si existe
             if (method_exists($controllerObj, 'gestion')) {
