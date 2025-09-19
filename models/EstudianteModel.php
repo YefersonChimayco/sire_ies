@@ -23,7 +23,7 @@ class EstudianteModel {
     }
 
     public function getAllEstudiantes() {
-        $stmt = $this->db->prepare("SELECT * FROM estudiantes");
+        $stmt = $this->db->prepare("SELECT * FROM estudiantes ORDER BY apellido_paterno, apellido_materno, nombres");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -52,6 +52,23 @@ class EstudianteModel {
         $stmt = $this->db->prepare("DELETE FROM estudiantes WHERE dni = :dni");
         $stmt->bindParam(':dni', $dni);
         return $stmt->execute();
+    }
+
+    // Nuevos métodos para búsqueda
+    public function buscarPorDni($dni) {
+        $stmt = $this->db->prepare("SELECT * FROM estudiantes WHERE dni LIKE :dni ORDER BY apellido_paterno, apellido_materno, nombres");
+        $search_term = "%$dni%";
+        $stmt->bindParam(':dni', $search_term);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function buscarPorNombre($nombre) {
+        $stmt = $this->db->prepare("SELECT * FROM estudiantes WHERE nombres LIKE :nombre OR apellido_paterno LIKE :nombre OR apellido_materno LIKE :nombre ORDER BY apellido_paterno, apellido_materno, nombres");
+        $search_term = "%$nombre%";
+        $stmt->bindParam(':nombre', $search_term);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>
