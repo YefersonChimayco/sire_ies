@@ -12,7 +12,7 @@ class ClienteModel {
     // Crear un cliente
     public function createCliente($ruc, $razon_social, $telefono, $correo, $fecha_registro, $estado = 1) {
         $stmt = $this->db->prepare("
-            INSERT INTO clientes (ruc, razon_social, telefono, correo, fecha_registro, estado) 
+            INSERT INTO Client_API (ruc, razon_social, telefono, correo, fecha_registro, estado) 
             VALUES (:ruc, :razon_social, :telefono, :correo, :fecha_registro, :estado)
         ");
         $stmt->bindParam(':ruc', $ruc);
@@ -26,7 +26,7 @@ class ClienteModel {
 
     // Obtener todos los clientes
     public function getAllClientes() {
-        $stmt = $this->db->prepare("SELECT * FROM clientes");
+        $stmt = $this->db->prepare("SELECT * FROM Client_API");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

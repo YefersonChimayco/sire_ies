@@ -10,14 +10,14 @@ class TokenModel {
     }
 
     // Crear un token
-    public function createToken($id, $token, $fecha_registro, $estado = 1) {
+    public function createToken($id_client_api, $token, $fecha_reg, $estado = 1) {
         $stmt = $this->db->prepare("
-            INSERT INTO Tokens (id, token, fecha_registro, estado) 
-            VALUES (:id, :token, :fecha_reg, :estado)
+            INSERT INTO Tokens (id_client_api, token, fecha_reg, estado) 
+            VALUES (:id_client_api, :token, :fecha_reg, :estado)
         ");
-        $stmt->bindParam(':id', $idi, PDO::PARAM_INT);
+        $stmt->bindParam(':id_client_api', $id_client_api, PDO::PARAM_INT);
         $stmt->bindParam(':token', $token);
-        $stmt->bindParam(':fecha_registro', $fecha_reg);
+        $stmt->bindParam(':fecha_reg', $fecha_reg);
         $stmt->bindParam(':estado', $estado, PDO::PARAM_INT);
         return $stmt->execute();
     }
@@ -38,14 +38,14 @@ class TokenModel {
     }
 
     // Actualizar un token
-    public function updateToken($id, $token, $fecha_reg, $estado) {
+    public function updateToken($id, $id_client_api, $token, $fecha_reg, $estado) {
         $stmt = $this->db->prepare("
             UPDATE Tokens 
-            SET id = :id, token = :token, fecha_reg = :fecha_reg, estado = :estado
+            SET id_client_api = :id_client_api, token = :token, fecha_reg = :fecha_reg, estado = :estado
             WHERE id = :id
         ");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':id_client_api', $id_client_api, PDO::PARAM_INT);
         $stmt->bindParam(':token', $token);
         $stmt->bindParam(':fecha_reg', $fecha_reg);
         $stmt->bindParam(':estado', $estado, PDO::PARAM_INT);
@@ -59,9 +59,9 @@ class TokenModel {
         return $stmt->execute();
     }
 
-    // 🔹 Obtener lista de clientes (para el select)
+    // Obtener lista de clientes (para el select)
     public function getAllClientes() {
-        $stmt = $this->db->prepare("SELECT id, razon_social    FROM Clientes");
+        $stmt = $this->db->prepare("SELECT id, razon_social FROM Client_API");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

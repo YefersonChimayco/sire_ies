@@ -115,15 +115,16 @@
     <form method="POST" action="">
         <h3>Registrar Token</h3>
 
-        <label for="id">Cliente API:</label>
-        <select name="id" id="id" required>
-            <option value="">-- Selecciona un cliente --</option>
-            <?php foreach ($clientes as $c): ?>
-                <option value="<?= $c['id'] ?>">
-                    <?= htmlspecialchars($c['id'] . " - " . $c['razon_social']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+     <label for="id_client_api">Cliente API:</label>
+<select name="id_client_api" id="id_client_api" required>
+    <option value="">-- Selecciona un cliente --</option>
+    <?php foreach ($clientes as $c): ?>
+        <option value="<?= $c['id'] ?>">
+            <?= htmlspecialchars($c['id'] . " - " . $c['razon_social']) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+
 
         <label for="token">Token:</label>
         <input type="text" name="token" id="token" required>
