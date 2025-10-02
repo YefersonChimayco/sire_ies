@@ -42,10 +42,6 @@
             box-sizing: border-box;
             transition: border 0.3s;
         }
-        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus {
-            border: 1px solid #007BFF;
-            outline: none;
-        }
         input[type="submit"], .btn {
             margin-top: 15px;
             padding: 10px 18px;
@@ -107,7 +103,6 @@
 <body>
     <h1>Gestión de Tokens</h1>
 
-    <!-- Botón de regresar -->
     <div style="text-align:center;">
         <a class="btn btn-dashboard" href="index.php?controller=auth&action=dashboard">⬅ Regresar al Dashboard</a>
     </div>
@@ -120,8 +115,15 @@
     <form method="POST" action="">
         <h3>Registrar Token</h3>
 
-        <label for="id_client_api">ID Cliente API:</label>
-        <input type="number" name="id_client_api" id="id_client_api" required>
+        <label for="id">Cliente API:</label>
+        <select name="id" id="id" required>
+            <option value="">-- Selecciona un cliente --</option>
+            <?php foreach ($clientes as $c): ?>
+                <option value="<?= $c['id'] ?>">
+                    <?= htmlspecialchars($c['id'] . " - " . $c['razon_social']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
 
         <label for="token">Token:</label>
         <input type="text" name="token" id="token" required>
