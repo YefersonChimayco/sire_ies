@@ -12,7 +12,7 @@ class TokenController {
     public function gestion() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id_client_api = intval($_POST['id_client_api'] ?? 0);
-            $token = trim($_POST['token'] ?? '');
+            $token = bin2hex(random_bytes(16)).'-'.$id_client_api;
             $fecha_registro = trim($_POST['fecha_reg'] ?? date("Y-m-d"));
             $estado = intval($_POST['estado'] ?? 1);
 
@@ -34,7 +34,7 @@ class TokenController {
     public function updateToken($id) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id_client_api = intval($_POST['id_client_api'] ?? 0);
-            $token = trim($_POST['token'] ?? '');
+            $token = bin2hex(random_bytes(16)).'-'.$id_client_api;
             $fecha_registro = trim($_POST['fecha_reg'] ?? date("Y-m-d"));
             $estado = intval($_POST['estado'] ?? 1);
 
@@ -60,5 +60,18 @@ class TokenController {
             exit;
         }
     }
+}
+// buscar estudiante
+if ($tipo="verEs(tudianteByNombre") {
+$token= explode ("-", $token);
+$id_client_api = $token_arr[1];
+$arr_Cliente = $objApi->buscarEstudianteById($id_estudiante) ;
+if ($arr_Cliente->estado) {
+    $data=$_POST['data'];
+    $arr_estudiantes = $objApi->
+} else {
+    # code...
+}
+
 }
 ?>

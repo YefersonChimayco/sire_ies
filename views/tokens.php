@@ -111,7 +111,6 @@
         <p class="message"><?= htmlspecialchars($message) ?></p>
     <?php endif; ?>
 
-    <!-- Formulario para registrar/editar token -->
     <form method="POST" action="">
         <h3>Registrar Token</h3>
 
@@ -124,14 +123,8 @@
         </option>
     <?php endforeach; ?>
 </select>
-
-
-        <label for="token">Token:</label>
-        <input type="text" name="token" id="token" required>
-
         <label for="fecha_reg">Fecha Registro:</label>
         <input type="date" name="fecha_reg" id="fecha_reg" value="<?= date('Y-m-d') ?>" required>
-
         <label for="estado">Estado:</label>
         <select name="estado" id="estado">
             <option value="1">Activo</option>
@@ -141,7 +134,6 @@
         <input type="submit" value="Guardar Token">
     </form>
 
-    <!-- Tabla de tokens -->
     <h3>Listado de Tokens</h3>
     <table>
         <thead>
