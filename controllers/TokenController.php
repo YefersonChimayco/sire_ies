@@ -62,16 +62,4 @@ class TokenController {
     }
 }
 // buscar estudiante
-if ($tipo="verEs(tudianteByNombre") {
-$token= explode ("-", $token);
-$id_client_api = $token_arr[1];
-$arr_Cliente = $objApi->buscarEstudianteById($id_estudiante) ;
-if ($arr_Cliente->estado) {
-    $data=$_POST['data'];
-    $arr_estudiantes = $objApi->
-} else {
-    # code...
-}
 
-}
-?>
