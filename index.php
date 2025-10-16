@@ -73,20 +73,15 @@ if (file_exists($controllerFile)) {
 }
 // === AGREGAR ESTAS LÍNEAS AL ROUTER PRINCIPAL ===
 
-// Rutas para API de estudiantes
-if ($controller === 'api' && $action === 'buscarEstudiantes') {
+// === RUTAS API ESTUDIANTES ===
+if ($controller === 'apiestudiante') {
+    require_once __DIR__ . '/controllers/ApiEstudianteController.php';
     $apiController = new ApiEstudianteController();
-    $apiController->buscarEstudiantes();
-} 
-elseif ($controller === 'api' && $action === 'getEstudiante' && isset($_GET['dni'])) {
-    $apiController = new ApiEstudianteController();
-    $apiController->getEstudiante($_GET['dni']);
-}
-elseif ($controller === 'api' && $action === 'documentacion') {
-    $apiController = new ApiEstudianteController();
-    $apiController->documentacion();
-}
-elseif ($controller === 'api' && $action === 'test') {
-    include __DIR__ . '/views/api_test.php';
-    exit;
+    
+    if ($action === 'buscar') {
+        $apiController->buscar();
+    } 
+    elseif ($action === 'get' && isset($_GET['dni'])) {
+        $apiController->get($_GET['dni']);
+    }
 }

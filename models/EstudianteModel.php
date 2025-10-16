@@ -54,23 +54,8 @@ class EstudianteModel {
         return $stmt->execute();
     }
 
-    // Nuevos métodos para búsqueda
-    public function buscarPorDni($dni) {
-        $stmt = $this->db->prepare("SELECT * FROM estudiantes WHERE dni LIKE :dni ORDER BY apellido_paterno, apellido_materno, nombres");
-        $search_term = "%$dni%";
-        $stmt->bindParam(':dni', $search_term);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function buscarPorNombre($nombre) {
-        $stmt = $this->db->prepare("SELECT * FROM estudiantes WHERE nombres LIKE :nombre OR apellido_paterno LIKE :nombre OR apellido_materno LIKE :nombre ORDER BY apellido_paterno, apellido_materno, nombres");
-        $search_term = "%$nombre%";
-        $stmt->bindParam(':nombre', $search_term);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    public function buscarEstudiantesAvanzado($filters = []) {
+ // Agregar este método a la clase EstudianteModel
+public function buscarEstudiantesAPI($dni = '', $nombre = '', $apellido = '', $limit = 50) {
     $sql = "SELECT 
                 e.dni,
                 e.nombres,
@@ -88,47 +73,27 @@ class EstudianteModel {
     $params = [];
     
     // Búsqueda por DNI exacto
-    if (!empty($filters['dni'])) {
+    if (!empty($dni)) {
         $sql .= " AND e.dni = :dni";
-        $params[':dni'] = $filters['dni'];
+        $params[':dni'] = $dni;
     }
     
-    // Búsqueda por nombres (like)
-    if (!empty($filters['nombres'])) {
-        $sql .= " AND e.nombres LIKE :nombres";
-        $params[':nombres'] = '%' . $filters['nombres'] . '%';
+    // Búsqueda por nombre (en nombres, apellido paterno o materno)
+    if (!empty($nombre)) {
+        $sql .= " AND (e.nombres LIKE :nombre OR e.apellido_paterno LIKE :nombre OR e.apellido_materno LIKE :nombre)";
+        $params[':nombre'] = '%' . $nombre . '%';
     }
     
-    // Búsqueda por apellido paterno (like)
-    if (!empty($filters['apellido_paterno'])) {
-        $sql .= " AND e.apellido_paterno LIKE :apellido_paterno";
-        $params[':apellido_paterno'] = '%' . $filters['apellido_paterno'] . '%';
+    // Búsqueda por apellido (en paterno o materno)
+    if (!empty($apellido)) {
+        $sql .= " AND (e.apellido_paterno LIKE :apellido OR e.apellido_materno LIKE :apellido)";
+        $params[':apellido'] = '%' . $apellido . '%';
     }
     
-    // Búsqueda por apellido materno (like)
-    if (!empty($filters['apellido_materno'])) {
-        $sql .= " AND e.apellido_materno LIKE :apellido_materno";
-        $params[':apellido_materno'] = '%' . $filters['apellido_materno'] . '%';
-    }
-    
-    // Búsqueda general en todos los campos de nombre
-    if (!empty($filters['q'])) {
-        $sql .= " AND (e.nombres LIKE :q OR e.apellido_paterno LIKE :q OR e.apellido_materno LIKE :q)";
-        $params[':q'] = '%' . $filters['q'] . '%';
-    }
-    
-    // Estado del estudiante
-    if (!empty($filters['estado'])) {
-        $sql .= " AND e.estado = :estado";
-        $params[':estado'] = $filters['estado'];
-    }
-    
-    // Orden por apellido paterno
+    // Orden y límite
     $sql .= " ORDER BY e.apellido_paterno, e.apellido_materno, e.nombres";
-    
-    // Límite para paginación
     $sql .= " LIMIT :limit";
-    $params[':limit'] = $filters['limit'];
+    $params[':limit'] = $limit;
     
     try {
         $stmt = $this->db->prepare($sql);
@@ -146,7 +111,7 @@ class EstudianteModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     } catch (PDOException $e) {
-        error_log("Database error in buscarEstudiantesAvanzado: " . $e->getMessage());
+        error_log("Error en buscarEstudiantesAPI: " . $e->getMessage());
         return [];
     }
 }

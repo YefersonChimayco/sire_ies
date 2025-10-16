@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/EstudianteModel.php';
 
-class ApiEstudianteController {
+class ApiController {
     private $model;
 
     public function __construct() {
@@ -9,9 +9,18 @@ class ApiEstudianteController {
     }
 
     /**
+     * Interfaz de prueba del API
+     */
+    public function test() {
+        // Mostrar la vista de prueba
+        include __DIR__ . '/../views/api_test.php';
+        exit;
+    }
+
+    /**
      * Buscar estudiantes - API JSON
      */
-    public function buscar() {
+    public function buscarEstudiantes() {
         // Configurar JSON
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
@@ -64,10 +73,12 @@ class ApiEstudianteController {
     /**
      * Obtener estudiante por DNI
      */
-    public function get($dni) {
+    public function getEstudiante() {
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
 
+        $dni = $_GET['dni'] ?? '';
+        
         // Validar DNI
         if (!preg_match('/^\d{8}$/', $dni)) {
             echo json_encode([
