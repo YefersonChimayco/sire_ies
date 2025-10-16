@@ -70,5 +70,85 @@ class EstudianteModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function buscarEstudiantesAvanzado($filters = []) {
+    $sql = "SELECT 
+                e.dni,
+                e.nombres,
+                e.apellido_paterno,
+                e.apellido_materno,
+                e.estado,
+                e.semestre,
+                e.programa_id,
+                e.fecha_matricula,
+                p.nombre as programa_nombre
+            FROM estudiantes e
+            LEFT JOIN programas_estudio p ON e.programa_id = p.id
+            WHERE 1=1";
+    
+    $params = [];
+    
+    // Búsqueda por DNI exacto
+    if (!empty($filters['dni'])) {
+        $sql .= " AND e.dni = :dni";
+        $params[':dni'] = $filters['dni'];
+    }
+    
+    // Búsqueda por nombres (like)
+    if (!empty($filters['nombres'])) {
+        $sql .= " AND e.nombres LIKE :nombres";
+        $params[':nombres'] = '%' . $filters['nombres'] . '%';
+    }
+    
+    // Búsqueda por apellido paterno (like)
+    if (!empty($filters['apellido_paterno'])) {
+        $sql .= " AND e.apellido_paterno LIKE :apellido_paterno";
+        $params[':apellido_paterno'] = '%' . $filters['apellido_paterno'] . '%';
+    }
+    
+    // Búsqueda por apellido materno (like)
+    if (!empty($filters['apellido_materno'])) {
+        $sql .= " AND e.apellido_materno LIKE :apellido_materno";
+        $params[':apellido_materno'] = '%' . $filters['apellido_materno'] . '%';
+    }
+    
+    // Búsqueda general en todos los campos de nombre
+    if (!empty($filters['q'])) {
+        $sql .= " AND (e.nombres LIKE :q OR e.apellido_paterno LIKE :q OR e.apellido_materno LIKE :q)";
+        $params[':q'] = '%' . $filters['q'] . '%';
+    }
+    
+    // Estado del estudiante
+    if (!empty($filters['estado'])) {
+        $sql .= " AND e.estado = :estado";
+        $params[':estado'] = $filters['estado'];
+    }
+    
+    // Orden por apellido paterno
+    $sql .= " ORDER BY e.apellido_paterno, e.apellido_materno, e.nombres";
+    
+    // Límite para paginación
+    $sql .= " LIMIT :limit";
+    $params[':limit'] = $filters['limit'];
+    
+    try {
+        $stmt = $this->db->prepare($sql);
+        
+        // Bind parameters
+        foreach ($params as $key => $value) {
+            if ($key === ':limit') {
+                $stmt->bindValue($key, (int)$value, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue($key, $value);
+            }
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        error_log("Database error in buscarEstudiantesAvanzado: " . $e->getMessage());
+        return [];
+    }
+}
 }
 ?>

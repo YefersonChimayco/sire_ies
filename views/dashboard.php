@@ -124,6 +124,17 @@ if (!isset($_SESSION['username'])) {
                 <h3>Usuarios</h3>
                 <p>Administrar usuarios del sistema</p>
             </a>
+           <a href="index.php?controller=api&action=test" class="dashboard-card">
+    <div class="card-icon">🔍</div>
+    <h3>API Estudiantes</h3>
+    <p>Probar API de búsqueda de estudiantes</p>
+</a>
+
+<a href="index.php?controller=auth&action=gestion" class="dashboard-card">
+    <div class="card-icon">shm_detach</div>
+    <h3>Usuarios</h3>
+    <p>Administrar usuarios del sistema</p>
+</a>
 
             <a href="index.php?controller=token&action=gestion" class="dashboard-card">
                 <div class="card-icon">🔑</div>

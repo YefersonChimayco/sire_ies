@@ -71,3 +71,22 @@ if (file_exists($controllerFile)) {
     http_response_code(404);
     echo "<h3>❌ Archivo '$controllerFile' no existe.</h3>";
 }
+// === AGREGAR ESTAS LÍNEAS AL ROUTER PRINCIPAL ===
+
+// Rutas para API de estudiantes
+if ($controller === 'api' && $action === 'buscarEstudiantes') {
+    $apiController = new ApiEstudianteController();
+    $apiController->buscarEstudiantes();
+} 
+elseif ($controller === 'api' && $action === 'getEstudiante' && isset($_GET['dni'])) {
+    $apiController = new ApiEstudianteController();
+    $apiController->getEstudiante($_GET['dni']);
+}
+elseif ($controller === 'api' && $action === 'documentacion') {
+    $apiController = new ApiEstudianteController();
+    $apiController->documentacion();
+}
+elseif ($controller === 'api' && $action === 'test') {
+    include __DIR__ . '/views/api_test.php';
+    exit;
+}
