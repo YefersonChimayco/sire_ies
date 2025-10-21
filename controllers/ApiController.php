@@ -1,116 +1,81 @@
 <?php
-require_once __DIR__ . '/../models/EstudianteModel.php';
+require_once __DIR__ . '/../models/ApiModelo.php';
+require_once __DIR__ . '/../models/TokenModel.php';
 
 class ApiController {
-    private $model;
+    private $modelo;
+    private $modeloToken;
 
     public function __construct() {
-        $this->model = new EstudianteModel();
+        $this->modelo = new ApiModelo();
+        $this->modeloToken = new TokenModel();
     }
 
-    /**
-     * Interfaz de prueba del API
-     */
-    public function test() {
-        // Mostrar la vista de prueba
-        include __DIR__ . '/../views/api_test.php';
-        exit;
-    }
-
-    /**
-     * Buscar estudiantes - API JSON
-     */
-    public function buscarEstudiantes() {
-        // Configurar JSON
-        header('Content-Type: application/json; charset=utf-8');
-        header('Access-Control-Allow-Origin: *');
+    public function buscarEstudiante() {
+        // Validar token
+        $token = $this->obtenerToken();
         
-        // Solo GET
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        if (!$this->validarToken($token)) {
+            http_response_code(401);
             echo json_encode([
-                'success' => false,
-                'message' => 'Solo método GET permitido'
+                'exito' => false,
+                'mensaje' => 'Token inválido o expirado'
             ]);
-            exit;
+            return;
         }
 
-        try {
-            // Parámetros simples
-            $dni = trim($_GET['dni'] ?? '');
-            $nombre = trim($_GET['nombre'] ?? '');
-            $apellido = trim($_GET['apellido'] ?? '');
-            $limit = (int)($_GET['limit'] ?? 50);
+        // Obtener parámetros de búsqueda
+        $dni = isset($_GET['dni']) ? trim($_GET['dni']) : '';
+        $nombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : '';
+        $apellido = isset($_GET['apellido']) ? trim($_GET['apellido']) : '';
+        $limite = isset($_GET['limite']) ? (int)$_GET['limite'] : 50;
 
-            // Validar límite
-            $limit = max(1, min(100, $limit));
+        // Realizar búsqueda
+        $estudiantes = $this->modelo->buscarEstudiantesAPI($dni, $nombre, $apellido, $limite);
 
-            // Buscar en el modelo
-            $estudiantes = $this->model->buscarEstudiantesAPI($dni, $nombre, $apellido, $limit);
+        // Registrar la solicitud en el contador
+        $this->registrarSolicitud($token);
 
-            // Respuesta JSON
-            echo json_encode([
-                'success' => true,
-                'data' => $estudiantes,
-                'total' => count($estudiantes),
-                'filtros' => [
-                    'dni' => $dni,
-                    'nombre' => $nombre,
-                    'apellido' => $apellido,
-                    'limit' => $limit
-                ]
-            ], JSON_UNESCAPED_UNICODE);
-
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error interno',
-                'error' => $e->getMessage()
-            ]);
-        }
-        exit;
+        // Devolver resultados
+        echo json_encode([
+            'exito' => true,
+            'total' => count($estudiantes),
+            'datos' => $estudiantes
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * Obtener estudiante por DNI
-     */
-    public function getEstudiante() {
-        header('Content-Type: application/json; charset=utf-8');
-        header('Access-Control-Allow-Origin: *');
-
-        $dni = $_GET['dni'] ?? '';
+    private function obtenerToken() {
+        $headers = getallheaders();
         
-        // Validar DNI
-        if (!preg_match('/^\d{8}$/', $dni)) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'DNI debe tener 8 dígitos'
-            ]);
-            exit;
+        // Buscar token en Authorization header
+        if (isset($headers['Authorization'])) {
+            return str_replace('Bearer ', '', $headers['Authorization']);
+        }
+        
+        // Buscar token en parámetro GET
+        if (isset($_GET['token'])) {
+            return $_GET['token'];
+        }
+        
+        return '';
+    }
+
+    private function validarToken($token) {
+        if (empty($token)) {
+            return false;
         }
 
-        try {
-            $estudiante = $this->model->getEstudianteByDni($dni);
+        // Usar el modelo de Token existente para validar
+        $cliente = $this->modeloToken->validarToken($token);
+        return $cliente !== false;
+    }
 
-            if ($estudiante) {
-                echo json_encode([
-                    'success' => true,
-                    'data' => $estudiante
-                ], JSON_UNESCAPED_UNICODE);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Estudiante no encontrado'
-                ]);
-            }
-
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error interno',
-                'error' => $e->getMessage()
-            ]);
+    private function registrarSolicitud($token) {
+        // Obtener ID del token para registrar en Count_request
+        $infoToken = $this->modeloToken->obtenerTokenPorToken($token);
+        if ($infoToken) {
+            $this->modeloToken->registrarSolicitud($infoToken['id'], 'busqueda_api');
         }
-        exit;
     }
 }
 ?>

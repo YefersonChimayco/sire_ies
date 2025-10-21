@@ -74,14 +74,18 @@ if (file_exists($controllerFile)) {
 // === AGREGAR ESTAS LÍNEAS AL ROUTER PRINCIPAL ===
 
 // === RUTAS API ESTUDIANTES ===
+
+// === RUTAS API ESTUDIANTES ===
+// === RUTAS API ESTUDIANTES ===
+// === RUTAS API ESTUDIANTES ===
 if ($controller === 'apiestudiante') {
     require_once __DIR__ . '/controllers/ApiEstudianteController.php';
     $apiController = new ApiEstudianteController();
     
     if ($action === 'buscar') {
         $apiController->buscar();
-    } 
-    elseif ($action === 'get' && isset($_GET['dni'])) {
-        $apiController->get($_GET['dni']);
+    } else {
+        // Mostrar interfaz de búsqueda amigable
+        $apiController->interfaz();
     }
 }

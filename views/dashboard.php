@@ -124,24 +124,24 @@ if (!isset($_SESSION['username'])) {
                 <h3>Usuarios</h3>
                 <p>Administrar usuarios del sistema</p>
             </a>
-           <a href="index.php?controller=api&action=test" class="dashboard-card">
+
+            <!-- ENLACE CORREGIDO PARA EL API DE ESTUDIANTES -->
+     <a href="public_buscador.php" class="dashboard-card" target="_blank">
     <div class="card-icon">🔍</div>
     <h3>API Estudiantes</h3>
-    <p>Probar API de búsqueda de estudiantes</p>
+    <p>Buscador público de estudiantes</p>
 </a>
-
-
 
             <a href="index.php?controller=token&action=gestion" class="dashboard-card">
                 <div class="card-icon">🔑</div>
                 <h3>Tokens</h3>
-                <p>Gestión de tokens</p>
+                <p>Gestión de tokens API</p>
             </a>
 
             <a href="index.php?controller=cliente&action=gestion" class="dashboard-card">
                 <div class="card-icon">🏢</div>
-                <h3>Clientes</h3>
-                <p>Gestión de clientes</p>
+                <h3>Clientes API</h3>
+                <p>Gestión de clientes para API</p>
             </a>
         </div>
     </main>

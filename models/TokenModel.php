@@ -65,5 +65,55 @@ class TokenModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Agregar estos métodos a tu TokenModel existente:
+
+public function validarToken($token) {
+    $stmt = $this->db->prepare("
+        SELECT t.*, c.razon_social 
+        FROM Tokens t
+        INNER JOIN Client_API c ON t.id_client_api = c.id
+        WHERE t.token = :token AND t.estado = 1 AND c.estado = 1
+    ");
+    
+    $stmt->bindParam(":token", $token);
+    $stmt->execute();
+    
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+public function obtenerTokenPorToken($token) {
+    $stmt = $this->db->prepare("SELECT * FROM Tokens WHERE token = :token");
+    $stmt->bindParam(":token", $token);
+    $stmt->execute();
+    
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+public function registrarSolicitud($id_token, $tipo = 'busqueda_api') {
+    // Primero intentar actualizar si ya existe registro para hoy
+    $stmt = $this->db->prepare("
+        UPDATE Count_request 
+        SET contador = contador + 1 
+        WHERE id_token = :id_token AND fecha = CURDATE() AND tipo = :tipo
+    ");
+    
+    $stmt->bindParam(":id_token", $id_token, PDO::PARAM_INT);
+    $stmt->bindParam(":tipo", $tipo);
+    $stmt->execute();
+    
+    // Si no se actualizó ninguna fila, insertar nuevo registro
+    if ($stmt->rowCount() == 0) {
+        $stmt = $this->db->prepare("
+            INSERT INTO Count_request (id_token, contador, tipo, fecha) 
+            VALUES (:id_token, 1, :tipo, CURDATE())
+        ");
+        
+        $stmt->bindParam(":id_token", $id_token, PDO::PARAM_INT);
+        $stmt->bindParam(":tipo", $tipo);
+        $stmt->execute();
+    }
+    
+    return true;
+}
 }
 ?>

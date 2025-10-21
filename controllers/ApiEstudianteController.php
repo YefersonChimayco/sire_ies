@@ -2,104 +2,36 @@
 require_once __DIR__ . '/../models/EstudianteModel.php';
 
 class ApiEstudianteController {
-    private $model;
+    private $modeloEstudiante;
 
     public function __construct() {
-        $this->model = new EstudianteModel();
+        $this->modeloEstudiante = new EstudianteModel();
     }
 
-    /**
-     * Buscar estudiantes - API JSON
-     */
     public function buscar() {
-        // Configurar JSON
-        header('Content-Type: application/json; charset=utf-8');
-        header('Access-Control-Allow-Origin: *');
+        // Token fijo
+        $tokenValido = "asdasfgfdadfsghjkljhdgsdfas";
         
-        // Solo GET
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Solo método GET permitido'
-            ]);
-            exit;
-        }
+        // Obtener parámetros de búsqueda
+        $dni = isset($_GET['dni']) ? trim($_GET['dni']) : '';
+        $nombre = isset($_GET['nombre']) ? trim($_GET['nombre']) : '';
+        $apellido = isset($_GET['apellido']) ? trim($_GET['apellido']) : '';
 
-        try {
-            // Parámetros simples
-            $dni = trim($_GET['dni'] ?? '');
-            $nombre = trim($_GET['nombre'] ?? '');
-            $apellido = trim($_GET['apellido'] ?? '');
-            $limit = (int)($_GET['limit'] ?? 50);
+        // Buscar estudiantes
+        $estudiantes = $this->modeloEstudiante->buscarEstudiantesAPI($dni, $nombre, $apellido, 50);
 
-            // Validar límite
-            $limit = max(1, min(100, $limit));
-
-            // Buscar en el modelo
-            $estudiantes = $this->model->buscarEstudiantesAPI($dni, $nombre, $apellido, $limit);
-
-            // Respuesta JSON
-            echo json_encode([
-                'success' => true,
-                'data' => $estudiantes,
-                'total' => count($estudiantes),
-                'filtros' => [
-                    'dni' => $dni,
-                    'nombre' => $nombre,
-                    'apellido' => $apellido,
-                    'limit' => $limit
-                ]
-            ], JSON_UNESCAPED_UNICODE);
-
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error interno',
-                'error' => $e->getMessage()
-            ]);
-        }
-        exit;
+        // Enviar respuesta JSON
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'exito' => true,
+            'total' => count($estudiantes),
+            'datos' => $estudiantes
+        ], JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * Obtener estudiante por DNI
-     */
-    public function get($dni) {
-        header('Content-Type: application/json; charset=utf-8');
-        header('Access-Control-Allow-Origin: *');
-
-        // Validar DNI
-        if (!preg_match('/^\d{8}$/', $dni)) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'DNI debe tener 8 dígitos'
-            ]);
-            exit;
-        }
-
-        try {
-            $estudiante = $this->model->getEstudianteByDni($dni);
-
-            if ($estudiante) {
-                echo json_encode([
-                    'success' => true,
-                    'data' => $estudiante
-                ], JSON_UNESCAPED_UNICODE);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Estudiante no encontrado'
-                ]);
-            }
-
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error interno',
-                'error' => $e->getMessage()
-            ]);
-        }
-        exit;
+    // Para mostrar la interfaz de búsqueda
+    public function interfaz() {
+        require_once __DIR__ . '/../views/buscador_api.php';
     }
 }
 ?>
